@@ -43,14 +43,16 @@ export const PAYPAL_CLIENT_ID = (env.VITE_PAYPAL_CLIENT_ID as string | undefined
 export const API_BASE = (env.VITE_API_BASE_URL as string | undefined) ?? "/api";
 
 /**
- * A publishable key alone is not enough to take a payment — every gateway here
- * needs the checkout API to price the order and verify the result. Without an
- * absolute backend URL the default "/api" resolves to Firebase Hosting, which
- * serves index.html and fails with a confusing parse error mid-payment.
- * Treating the backend as part of "configured" keeps the gateway honestly
- * unavailable until it can actually complete.
+ * A publishable key alone is not enough to take a payment — every gateway also
+ * needs the checkout API deployed to price the order and verify the result.
+ *
+ * The API is same-origin ("/api", rewritten by Firebase Hosting to the `api`
+ * function), so we cannot detect it by shape. Instead this is an explicit
+ * opt-in: VITE_API_BASE_URL must be SET. Unset means the function is not
+ * deployed yet, and the gateway stays honestly unavailable rather than failing
+ * mid-payment when "/api" falls through to index.html and returns HTML.
  */
-export const BACKEND_READY = /^https?:\/\//.test(API_BASE);
+export const BACKEND_READY = Boolean(env.VITE_API_BASE_URL);
 
 export const gateways: Gateway[] = [
   {

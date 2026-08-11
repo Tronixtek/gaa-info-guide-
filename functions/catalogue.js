@@ -10,22 +10,10 @@
  * integers avoid the rounding bugs floats would introduce.
  */
 
-export interface CatalogueFile {
-  label: string;
-  /** Object key inside the R2 bucket. Never exposed to the client directly. */
-  path: string;
-}
-
-export interface CatalogueEntry {
-  title: string;
-  NGN: number;
-  files: CatalogueFile[];
-}
-
-export const CATALOGUE: Record<string, CatalogueEntry> = {
+const CATALOGUE = {
   "remote-job-assessment-pack": {
     title: "Remote Job Assessment Pack",
-    NGN: 4_500_000, // ₦45,000
+    NGN: 4500000, // ₦45,000
     files: [
       { label: "Remote Job Assessment Pack (PDF)", path: "packs/remote-job-assessment-pack.pdf" },
       { label: "Application tracker (XLSX)", path: "packs/application-tracker.xlsx" }
@@ -33,7 +21,7 @@ export const CATALOGUE: Record<string, CatalogueEntry> = {
   },
   "study-abroad-readiness-kit": {
     title: "Study Abroad Readiness Kit",
-    NGN: 6_000_000, // ₦60,000
+    NGN: 6000000, // ₦60,000
     files: [
       { label: "Study Abroad Readiness Kit (PDF)", path: "packs/study-abroad-readiness-kit.pdf" },
       { label: "Twelve-month timeline tracker (XLSX)", path: "packs/timeline-tracker.xlsx" }
@@ -41,7 +29,7 @@ export const CATALOGUE: Record<string, CatalogueEntry> = {
   },
   "global-career-training-bundle": {
     title: "Global Career Training Bundle",
-    NGN: 12_000_000, // ₦120,000
+    NGN: 12000000, // ₦120,000
     files: [
       {
         label: "Global Career Training Bundle (PDF)",
@@ -52,23 +40,13 @@ export const CATALOGUE: Record<string, CatalogueEntry> = {
   }
 };
 
-export const SUPPORTED_CURRENCIES = ["NGN"] as const;
-export type Currency = (typeof SUPPORTED_CURRENCIES)[number];
-
-export interface PricedLine {
-  title: string;
-  amount: number;
-  currency: Currency;
-  files: CatalogueFile[];
-}
-
 /**
  * Resolves a product and currency to a priced line.
  * Throws on anything unknown rather than defaulting, so a bad slug can never
  * be silently priced at zero.
  */
-export function priceFor(productSlug: unknown, currency: unknown): PricedLine {
-  if (typeof productSlug !== "string" || !(productSlug in CATALOGUE)) {
+function priceFor(productSlug, currency) {
+  if (typeof productSlug !== "string" || !Object.prototype.hasOwnProperty.call(CATALOGUE, productSlug)) {
     throw new Error(`Unknown product: ${String(productSlug)}`);
   }
   if (currency !== "NGN") {
@@ -82,3 +60,5 @@ export function priceFor(productSlug: unknown, currency: unknown): PricedLine {
 
   return { title: entry.title, amount: entry.NGN, currency: "NGN", files: entry.files };
 }
+
+module.exports = { CATALOGUE, priceFor };
