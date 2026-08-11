@@ -14,7 +14,8 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const SITE_URL = "https://gaainfoguide.com";
+// Keep in sync with `site.url` in src/content/site.ts.
+const SITE_URL = "https://scholar-zone.web.app";
 
 const readSlugs = (relativePath) => {
   const source = readFileSync(resolve(root, relativePath), "utf8");

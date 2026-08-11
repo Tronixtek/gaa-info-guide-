@@ -5,7 +5,10 @@ import { testTypes } from "./testTypes";
 export const site = {
   name: "GAA Info Guide",
   shortName: "GAA",
-  url: "https://gaainfoguide.com",
+  // Firebase Hosting default domain. Change this and SITE_URL in
+  // scripts/generate-sitemap.mjs together when a custom domain is connected —
+  // canonical tags and the sitemap both read from here.
+  url: "https://scholar-zone.web.app",
   tagline: "Practice tests and preparation guides for global careers",
   description:
     "Free timed practice tests with worked solutions for numerical, verbal, logical, diagrammatic and situational judgement assessments — plus preparation guides for remote hiring, study abroad and work-from-home careers.",

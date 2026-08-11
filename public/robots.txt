@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gaainfoguide.com/sitemap.xml
+Sitemap: https://scholar-zone.web.app/sitemap.xml
