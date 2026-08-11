@@ -26,6 +26,7 @@ Paystack integration.
 | --- | --- | --- |
 | Paystack **secret** key | `sk_live_…` | `wrangler secret put PAYSTACK_SECRET_KEY` |
 | Download signing key | 32+ random bytes | `wrangler secret put DOWNLOAD_SIGNING_KEY` |
+| Paystack **subaccount** (optional) | `ACCT_…` | `wrangler secret put PAYSTACK_SUBACCOUNT` |
 
 Anyone with the secret key can charge cards, issue refunds and read your
 customer data. It must never appear in chat, in git, or in any `VITE_*`
@@ -157,6 +158,89 @@ https://scholar-zone-api.yourname.workers.dev/api/webhooks/paystack
 The webhook is the source of truth. It arrives even when the buyer closes the
 tab before the browser's verify call runs — without it, those buyers pay and
 receive nothing.
+
+---
+
+## Separating this project's money from your other app
+
+You already have a Paystack business with another app using its keys. Two
+Paystack features could separate Scholar Zone's revenue, and they solve
+different problems.
+
+### Subaccount — what we use
+
+A [subaccount](https://paystack.com/docs/payments/multi-split-payments/) routes
+settlement for a transaction to a different bank account, using the **same
+Paystack business and the same keys**. You pass `subaccount: "ACCT_xxxx"` when
+initialising a transaction; Paystack settles that payment to the subaccount's
+bank account instead of your main one.
+
+How the money divides:
+
+- `percentage_charge` is set when you create the subaccount and is the share
+  the **main** account keeps. Set it to `0` for 100% to the subaccount.
+- `transaction_charge` overrides that with a flat fee to the main account.
+- `bearer` decides who pays Paystack's fee. Default is the main account; pass
+  `bearer: "subaccount"` to move it.
+
+Create it in Dashboard → Settings → Subaccounts (or via the create subaccount
+API), pointing at the bank account you want Scholar Zone money to land in. Then
+set it on the Worker:
+
+```bash
+cd worker
+npx wrangler secret put PAYSTACK_SUBACCOUNT   # ACCT_xxxxxxxxxx
+```
+
+Leave it unset and everything settles to your main account as normal — the
+integration works either way.
+
+**Why this and not a second Paystack account:** a separate business account
+means separate KYC, separate compliance and a separate dashboard to reconcile.
+A subaccount gives you a separate settlement bank account and clean per-project
+reporting without any of that.
+
+### Dedicated Virtual Accounts — not the right fit here
+
+A DVA gives a customer a permanent bank account number to transfer into. It
+sounds like what you described, but it does not suit one-off pack sales:
+
+- **Nigeria-only, and registered businesses only.** Requires CAC registration
+  (or local equivalent) with **every** KYC document submitted and approved. A
+  "starter business" account cannot use it.
+- **Per customer, capped at 1,000 accounts.** You would burn that allowance on
+  one-time buyers who never return.
+- Requires collecting each customer's full name and phone number up front.
+
+DVAs are built for recurring collections and wallet top-ups from customers you
+have a continuing relationship with — not strangers buying a PDF once.
+
+### You still get "customer transfers to an account"
+
+Paystack Checkout already offers **bank transfer** as a payment channel. The
+buyer picks it and Paystack shows a one-off account number to send money to,
+which resolves automatically. Same experience, no DVA, no CAC gate.
+
+The Worker enables it explicitly:
+
+```ts
+const PAYSTACK_CHANNELS = ["card", "bank_transfer", "ussd", "bank"];
+```
+
+Drop any channel from that array to hide it at checkout.
+
+### Why the transaction is now initialised server-side
+
+`subaccount` and `channels` can only be set on the
+[Initialize Transaction](https://paystack.com/docs/payments/accept-payments/)
+call, which requires the secret key — so it must happen on the Worker. The
+Worker returns an `access_code`, and the browser calls
+`new PaystackPop().resumeTransaction(accessCode)`.
+
+This is also strictly safer than the old inline flow: the amount, currency,
+channels and subaccount are all fixed before the browser is involved, and the
+client holds nothing but an opaque code. If the inline modal is blocked, the
+code falls back to Paystack's hosted checkout URL.
 
 ---
 

@@ -42,6 +42,16 @@ export const PAYPAL_CLIENT_ID = (env.VITE_PAYPAL_CLIENT_ID as string | undefined
  */
 export const API_BASE = (env.VITE_API_BASE_URL as string | undefined) ?? "/api";
 
+/**
+ * A publishable key alone is not enough to take a payment — every gateway here
+ * needs the checkout API to price the order and verify the result. Without an
+ * absolute backend URL the default "/api" resolves to Firebase Hosting, which
+ * serves index.html and fails with a confusing parse error mid-payment.
+ * Treating the backend as part of "configured" keeps the gateway honestly
+ * unavailable until it can actually complete.
+ */
+export const BACKEND_READY = /^https?:\/\//.test(API_BASE);
+
 export const gateways: Gateway[] = [
   {
     id: "paystack",
@@ -52,7 +62,7 @@ export const gateways: Gateway[] = [
     // be approved per account — add "USD" here once it is live, and add a USD
     // price to the worker catalogue at the same time.
     currencies: ["NGN"],
-    configured: Boolean(PAYSTACK_PUBLIC_KEY)
+    configured: Boolean(PAYSTACK_PUBLIC_KEY) && BACKEND_READY
   },
   {
     id: "flutterwave",
@@ -60,7 +70,7 @@ export const gateways: Gateway[] = [
     blurb: "Wide African coverage plus international cards, with mobile money in several markets.",
     methods: ["Card", "Bank transfer", "Mobile money"],
     currencies: ["NGN", "USD"],
-    configured: Boolean(FLUTTERWAVE_PUBLIC_KEY)
+    configured: Boolean(FLUTTERWAVE_PUBLIC_KEY) && BACKEND_READY
   },
   {
     id: "stripe",
@@ -68,7 +78,7 @@ export const gateways: Gateway[] = [
     blurb: "International cards, Apple Pay and Google Pay. The default for buyers outside Africa.",
     methods: ["Card", "Apple Pay", "Google Pay"],
     currencies: ["USD"],
-    configured: Boolean(STRIPE_PUBLISHABLE_KEY)
+    configured: Boolean(STRIPE_PUBLISHABLE_KEY) && BACKEND_READY
   },
   {
     id: "paypal",
@@ -76,7 +86,7 @@ export const gateways: Gateway[] = [
     blurb: "Pay with a PayPal balance or a linked card, without sharing card details with us.",
     methods: ["PayPal balance", "Card"],
     currencies: ["USD"],
-    configured: Boolean(PAYPAL_CLIENT_ID)
+    configured: Boolean(PAYPAL_CLIENT_ID) && BACKEND_READY
   }
 ];
 
@@ -162,7 +172,9 @@ export interface CreateOrderResponse {
   /** Amount the SERVER decided, in minor units, echoed back for display only. */
   amount: number;
   currency: Currency;
-  /** Stripe and PayPal hand back a URL or order id to hand to their SDK. */
+  /** Paystack access code from the server-side initialize call. */
+  accessCode?: string;
+  /** Hosted-checkout URL; also the fallback if the inline modal is blocked. */
   redirectUrl?: string;
   providerOrderId?: string;
   publicKey?: string;

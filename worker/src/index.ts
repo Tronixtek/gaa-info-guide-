@@ -24,7 +24,22 @@ export interface Env {
   DOWNLOAD_SIGNING_KEY: string;
   /** e.g. https://scholar-zone.web.app */
   ALLOWED_ORIGIN: string;
+  /**
+   * Optional Paystack subaccount (ACCT_xxxx). When set, settlement for these
+   * transactions is routed to that subaccount's bank account, keeping Scholar
+   * Zone revenue separate from the other app on the same Paystack business.
+   * Unset = everything settles to the main account as normal.
+   */
+  PAYSTACK_SUBACCOUNT?: string;
 }
+
+/**
+ * Payment channels offered on the checkout. `bank_transfer` gives the buyer a
+ * one-off account number to send money to — the "customer transfers to an
+ * account" flow, without needing Dedicated Virtual Accounts (which require a
+ * CAC-registered business and are metered per customer).
+ */
+const PAYSTACK_CHANNELS = ["card", "bank_transfer", "ussd", "bank"];
 
 const DOWNLOAD_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
 
@@ -222,10 +237,57 @@ export default {
           )
           .run();
 
+        // Initialise server-side rather than handing amount+key to inline JS.
+        // Two reasons: `subaccount` and `channels` can ONLY be set here, and
+        // the amount now never passes through the browser at all — the client
+        // receives an opaque access code and nothing it can tamper with.
+        const initBody: Record<string, unknown> = {
+          email,
+          amount: line.amount,
+          currency: line.currency,
+          reference,
+          channels: PAYSTACK_CHANNELS,
+          metadata: {
+            product_slug: productSlug,
+            product_title: line.title,
+            customer_name: typeof name === "string" ? name : null
+          }
+        };
+
+        // Route settlement to the project's own subaccount when configured.
+        if (env.PAYSTACK_SUBACCOUNT) {
+          initBody.subaccount = env.PAYSTACK_SUBACCOUNT;
+        }
+
+        const initResponse = await fetch("https://api.paystack.co/transaction/initialize", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${env.PAYSTACK_SECRET_KEY}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(initBody)
+        });
+
+        const initJson = (await initResponse.json()) as {
+          status?: boolean;
+          message?: string;
+          data?: { access_code?: string; authorization_url?: string };
+        };
+
+        if (!initJson.status || !initJson.data?.access_code) {
+          console.error("paystack initialize failed", initJson.message);
+          return json(env, 502, {
+            error: "We could not start this payment. Nothing has been charged — please try again."
+          });
+        }
+
         return json(env, 200, {
           reference,
           amount: line.amount,
-          currency: line.currency
+          currency: line.currency,
+          accessCode: initJson.data.access_code,
+          // Fallback for buyers whose browser blocks the inline modal.
+          redirectUrl: initJson.data.authorization_url
         });
       }
 
@@ -364,7 +426,9 @@ export default {
           ok: true,
           products: Object.keys(CATALOGUE).length,
           gateway: "paystack",
-          currency: "NGN"
+          currency: "NGN",
+          subaccountRouting: Boolean(env.PAYSTACK_SUBACCOUNT),
+          channels: PAYSTACK_CHANNELS
         });
       }
 

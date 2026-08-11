@@ -11,7 +11,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   FLUTTERWAVE_PUBLIC_KEY,
   PAYPAL_CLIENT_ID,
-  PAYSTACK_PUBLIC_KEY,
   SCRIPTS,
   availabilityOf,
   createOrder,
@@ -31,7 +30,9 @@ import { GatewayLogo } from "./GatewayLogo";
 
 declare global {
   interface Window {
-    PaystackPop?: { newTransaction: (options: Record<string, unknown>) => void };
+    PaystackPop?: new () => {
+      resumeTransaction: (accessCode: string, options?: Record<string, unknown>) => void;
+    };
     FlutterwaveCheckout?: (options: Record<string, unknown>) => void;
     paypal?: {
       Buttons: (options: Record<string, unknown>) => {
@@ -124,13 +125,22 @@ export function Checkout({ product }: { product: Product }) {
       const order = await createOrder({ productSlug: product.slug, gateway, currency, email, name });
 
       if (gateway === "paystack") {
+        // The order was initialised server-side, so the amount, currency,
+        // channels and subaccount are all fixed before the browser is
+        // involved. All we hold is an opaque access code.
+        if (!order.accessCode) throw new Error("Payment could not be started.");
+
         await loadScript(SCRIPTS.paystack);
-        window.PaystackPop?.newTransaction({
-          key: PAYSTACK_PUBLIC_KEY,
-          email,
-          amount: order.amount,
-          currency: order.currency,
-          reference: order.reference,
+        if (!window.PaystackPop) {
+          // Inline blocked — fall back to Paystack's hosted checkout.
+          if (order.redirectUrl) {
+            window.location.href = order.redirectUrl;
+            return;
+          }
+          throw new Error("Paystack could not load.");
+        }
+
+        new window.PaystackPop().resumeTransaction(order.accessCode, {
           onSuccess: () => void confirm(order.reference, "paystack"),
           onCancel: () => {
             setStage("form");
