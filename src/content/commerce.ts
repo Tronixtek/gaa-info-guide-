@@ -10,6 +10,7 @@ export const products: Product[] = [
     priceUsd: 29,
     priceNgn: 45000,
     format: "PDF workbook + editable spreadsheet trackers",
+    paystackUrl: "",
     deliverables: [
       "68-page PDF workbook",
       "3 spreadsheet trackers (Google Sheets and Excel)",
@@ -34,6 +35,7 @@ export const products: Product[] = [
     priceUsd: 39,
     priceNgn: 60000,
     format: "PDF planner + editable spreadsheet trackers",
+    paystackUrl: "",
     deliverables: [
       "84-page PDF planner",
       "Twelve-month timeline tracker (Google Sheets and Excel)",
@@ -60,6 +62,7 @@ export const products: Product[] = [
     priceUsd: 79,
     priceNgn: 120000,
     format: "Full PDF library + all trackers + structured programme",
+    paystackUrl: "",
     deliverables: [
       "Everything in both packs above",
       "Four-week programme as a day-by-day PDF schedule",

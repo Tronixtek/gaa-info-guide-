@@ -1,11 +1,11 @@
 import { Check, FileText, Package } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { Checkout } from "../components/Checkout";
+import { BuyPanel } from "../components/BuyPanel";
 import { Breadcrumbs, PageHeader, Tag } from "../components/ui";
 import { productBySlug, products } from "../content/commerce";
 import { site } from "../content/site";
 import { breadcrumbJsonLd, useSeo } from "../lib/seo";
-import { formatPrice } from "../lib/payments";
+import { formatPrice } from "../lib/format";
 import { NotFound } from "./NotFound";
 
 export function ProductDetail() {
@@ -113,7 +113,7 @@ export function ProductDetail() {
 
         <aside className="product-buy">
           <Tag tone="accent">{product.badge}</Tag>
-          <Checkout product={product} />
+          <BuyPanel product={product} />
         </aside>
       </div>
     </div>

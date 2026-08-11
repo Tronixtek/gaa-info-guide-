@@ -8,11 +8,6 @@
     ],
     "rewrites": [
       {
-        "comment": "API must be matched before the SPA catch-all, or /api/** would be served index.html.",
-        "source": "/api/**",
-        "function": "api"
-      },
-      {
         "source": "**",
         "destination": "/index.html"
       }
@@ -50,12 +45,5 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false
-  },
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "runtime": "nodejs20"
-    }
-  ]
+  }
 }

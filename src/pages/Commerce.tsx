@@ -58,9 +58,9 @@ export function Resources() {
       </div>
 
       <p className="footnote">
-        Pay with Paystack, Flutterwave, Stripe or PayPal — in USD or NGN. Card details go to the
-        payment provider and never touch our servers. The {stats.questionCount} practice questions and{" "}
-        {stats.guideCount} guides on this site stay free regardless.
+        Payment is handled by Paystack — card, bank transfer or USSD — and your download arrives
+        straight after. Card details never touch Scholar Zone. The {stats.questionCount} practice
+        questions and {stats.guideCount} guides on this site stay free regardless.
       </p>
     </div>
   );

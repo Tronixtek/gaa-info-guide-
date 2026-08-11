@@ -112,6 +112,14 @@ export interface Product {
   /** What the buyer receives, listed on the product page before purchase. */
   deliverables: string[];
   format: string;
+  /**
+   * Paystack Storefront product link. Paste it from the Paystack dashboard
+   * (Commerce -> Products -> Share). Paystack takes the payment and delivers
+   * the file, so there is no checkout or backend on our side.
+   * Empty string = not on sale yet; the product page says so instead of
+   * rendering a dead button.
+   */
+  paystackUrl: string;
 }
 
 export interface PricingTier {

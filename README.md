@@ -103,6 +103,6 @@ formats. No live commercial test paper is reproduced.
 ## Not built yet
 
 - Accounts and cross-device progress (results are session-only today)
-- Payment capture — `/pricing` and `/resources` are presentational
+- Product pack files (every `paystackUrl` is empty until they exist)
 - Backend for the contact and newsletter forms
 - Publisher- and employer-specific landing pages at volume
