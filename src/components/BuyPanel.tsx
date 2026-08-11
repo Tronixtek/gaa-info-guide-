@@ -38,13 +38,14 @@ export function BuyPanel({ product }: { product: Product }) {
 
           <ul className="buy-points">
             <li>
-              <Check size={15} aria-hidden="true" /> Card, bank transfer, USSD
+              <Check size={15} aria-hidden="true" /> Pay by card, bank transfer or USSD
             </li>
             <li>
-              <Check size={15} aria-hidden="true" /> Download sent right after payment
+              <Check size={15} aria-hidden="true" /> Download opens straight after payment
             </li>
             <li>
-              <Check size={15} aria-hidden="true" /> Lifetime access, including updates
+              <Check size={15} aria-hidden="true" /> Link emailed to you as well, so closing the tab
+              costs you nothing
             </li>
           </ul>
 

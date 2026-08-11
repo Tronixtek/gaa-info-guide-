@@ -63,6 +63,25 @@ npm run build
 firebase deploy --only hosting
 ```
 
+## How the customer receives the material
+
+Paystack does the whole delivery. Two paths, both automatic, which between them
+cover the usual failure modes:
+
+1. **Instant redirect.** After a successful payment the buyer lands on a
+   download page and can take the files immediately.
+2. **Automated email.** Paystack also emails a link to that same download page,
+   so a buyer who closes the tab has not lost the purchase.
+
+Limits: **10 files per product, up to 5 GB per file.**
+
+Two things follow for this catalogue:
+
+- The Global Career Training Bundle does not need a ZIP. Upload the trackers as
+  separate files on the product — nicer for the buyer than one archive.
+- Nothing needs to be reissued by hand. When a buyer says they lost the file,
+  point them at the Paystack email or resend from the dashboard.
+
 ## Routing this project's money separately
 
 You have another app on the same Paystack business. Two options:
