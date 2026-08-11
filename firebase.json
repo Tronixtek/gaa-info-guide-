@@ -1,13 +1,12 @@
 {
   "hosting": {
     "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
-      {
-        "comment": "API must be matched before the SPA catch-all, or /api/** would be served index.html.",
-        "source": "/api/**",
-        "function": "api"
-      },
       {
         "source": "**",
         "destination": "/index.html"
@@ -15,7 +14,7 @@
     ],
     "headers": [
       {
-        "comment": "Default: the HTML shell must revalidate, or a deploy takes up to an hour to reach returning visitors. Every route rewrites to index.html, so this has to match all paths — a '/index.html' pattern never matches a request for '/'. Later entries override this for the paths they match.",
+        "comment": "Default: the HTML shell must revalidate, or a deploy takes up to an hour to reach returning visitors. Every route rewrites to index.html, so this has to match all paths \u2014 a '/index.html' pattern never matches a request for '/'. Later entries override this for the paths they match.",
         "source": "**",
         "headers": [
           {

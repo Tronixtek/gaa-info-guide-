@@ -35,7 +35,11 @@ export const FLUTTERWAVE_PUBLIC_KEY = (env.VITE_FLUTTERWAVE_PUBLIC_KEY as string
 export const STRIPE_PUBLISHABLE_KEY = (env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined) ?? "";
 export const PAYPAL_CLIENT_ID = (env.VITE_PAYPAL_CLIENT_ID as string | undefined) ?? "";
 
-/** Backend base. Firebase rewrites /api/** to the checkout function. */
+/**
+ * Checkout API base — the Cloudflare Worker, on its own origin.
+ * The site is static on Firebase Hosting, which cannot rewrite to a Worker, so
+ * this must be the Worker's absolute URL in any real deployment.
+ */
 export const API_BASE = (env.VITE_API_BASE_URL as string | undefined) ?? "/api";
 
 export const gateways: Gateway[] = [
@@ -44,7 +48,10 @@ export const gateways: Gateway[] = [
     name: "Paystack",
     blurb: "Cards, bank transfer, USSD and mobile money across Nigeria, Ghana, Kenya and South Africa.",
     methods: ["Card", "Bank transfer", "USSD", "Mobile money"],
-    currencies: ["NGN", "USD"],
+    // NGN only. Paystack USD settlement is not enabled by default and has to
+    // be approved per account — add "USD" here once it is live, and add a USD
+    // price to the worker catalogue at the same time.
+    currencies: ["NGN"],
     configured: Boolean(PAYSTACK_PUBLIC_KEY)
   },
   {

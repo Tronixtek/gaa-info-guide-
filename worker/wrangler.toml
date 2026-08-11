@@ -1,0 +1,27 @@
+name = "scholar-zone-api"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+
+# Public, non-secret config. Secrets are set with `wrangler secret put` and
+# never appear in this file:
+#   wrangler secret put PAYSTACK_SECRET_KEY
+#   wrangler secret put DOWNLOAD_SIGNING_KEY
+[vars]
+ALLOWED_ORIGIN = "https://scholar-zone.web.app"
+
+# Order records. Create with:
+#   wrangler d1 create scholar-zone-orders
+# then paste the returned database_id below.
+[[d1_databases]]
+binding = "DB"
+database_name = "scholar-zone-orders"
+database_id = "REPLACE_WITH_ID_FROM_WRANGLER_D1_CREATE"
+
+# Pack files. Create with:
+#   wrangler r2 bucket create scholar-zone-packs
+# Keep this bucket PRIVATE — downloads are streamed through the Worker behind
+# a signed token. A public bucket would make every pack free to anyone who
+# guesses a filename.
+[[r2_buckets]]
+binding = "PACKS"
+bucket_name = "scholar-zone-packs"

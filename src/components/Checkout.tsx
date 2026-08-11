@@ -49,7 +49,8 @@ interface Blocked {
 }
 
 export function Checkout({ product }: { product: Product }) {
-  const [currency, setCurrency] = useState<Currency>("USD");
+  // NGN is the default: Paystack is the live gateway and settles in naira.
+  const [currency, setCurrency] = useState<Currency>("NGN");
   const [gateway, setGateway] = useState<GatewayId | null>(null);
   const [blocked, setBlocked] = useState<Blocked | null>(null);
   const [email, setEmail] = useState("");
@@ -272,7 +273,7 @@ export function Checkout({ product }: { product: Product }) {
         </span>
         <h2>Payment confirmed</h2>
         <p>
-          Verified against the payment provider and receipted to <strong>{email}</strong>. Your
+          Verified with Paystack. Your
           reference is <code>{result.reference}</code> — keep it for any support request.
         </p>
         {result.downloads && result.downloads.length > 0 && (
@@ -286,9 +287,13 @@ export function Checkout({ product }: { product: Product }) {
             ))}
           </ul>
         )}
-        <p className="footnote">
-          Download links are time-limited. The same links are in your email receipt, so you can come
-          back to them later.
+        <p className="checkout-save-warning">
+          <AlertTriangle size={16} aria-hidden="true" />
+          <span>
+            <strong>Save these links now.</strong> They work for 7 days, but we do not email them
+            yet — Paystack's receipt confirms your payment but does not include your downloads. If
+            you lose them, email us your reference and we will reissue them.
+          </span>
         </p>
       </div>
     );

@@ -2675,3 +2675,24 @@ main {
   align-items: center;
   gap: 6px;
 }
+
+.checkout-save-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--coral-300);
+  border-radius: var(--radius-sm);
+  background: var(--coral-50);
+  color: #8A3A22;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.checkout-save-warning svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--coral-600);
+}
