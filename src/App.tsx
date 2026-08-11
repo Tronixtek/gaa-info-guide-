@@ -6,6 +6,7 @@ import { GuideDetail, GuidesIndex } from "./pages/Guides";
 import { Home } from "./pages/Home";
 import { Privacy, Terms } from "./pages/Legal";
 import { NotFound } from "./pages/NotFound";
+import { OpportunitiesIndex, OpportunityDetail } from "./pages/Opportunities";
 import { PracticeIndex, PracticeTest } from "./pages/Practice";
 import { TestTypeDetail, TestTypesIndex } from "./pages/TestTypes";
 
@@ -14,6 +15,9 @@ export function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
+
+        <Route path="opportunities" element={<OpportunitiesIndex />} />
+        <Route path="opportunities/:slug" element={<OpportunityDetail />} />
 
         <Route path="practice" element={<PracticeIndex />} />
         <Route path="practice/:slug" element={<PracticeTest />} />

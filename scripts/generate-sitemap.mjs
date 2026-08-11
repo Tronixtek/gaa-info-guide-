@@ -29,6 +29,7 @@ const readSlugs = (relativePath) => {
 const testTypeSlugs = readSlugs("src/content/testTypes.ts");
 const guideSlugs = readSlugs("src/content/guides.ts");
 const authorSlugs = readSlugs("src/content/authors.ts");
+const opportunitySlugs = readSlugs("src/content/opportunities.ts");
 
 // Test types with no question bank yet are still documented, but only the ones
 // with questions get a /practice route.
@@ -40,6 +41,7 @@ const practicedTypes = testTypeSlugs.filter((slug) =>
 /** @type {{path: string, priority: string, changefreq: string}[]} */
 const routes = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
+  { path: "/opportunities", priority: "0.9", changefreq: "weekly" },
   { path: "/practice", priority: "0.9", changefreq: "weekly" },
   { path: "/test-types", priority: "0.9", changefreq: "monthly" },
   { path: "/guides", priority: "0.9", changefreq: "weekly" },
@@ -50,6 +52,11 @@ const routes = [
   { path: "/contact", priority: "0.4", changefreq: "yearly" },
   { path: "/privacy", priority: "0.2", changefreq: "yearly" },
   { path: "/terms", priority: "0.2", changefreq: "yearly" },
+  ...opportunitySlugs.map((slug) => ({
+    path: `/opportunities/${slug}`,
+    priority: "0.9",
+    changefreq: "monthly"
+  })),
   ...practicedTypes.map((slug) => ({
     path: `/practice/${slug}`,
     priority: "0.8",

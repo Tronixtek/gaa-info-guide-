@@ -2,6 +2,7 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { footerNav, primaryNav, site } from "../content/site";
+import { Logo } from "./Logo";
 
 function Header() {
   const [navOpen, setNavOpen] = useState(false);
@@ -14,9 +15,8 @@ function Header() {
   return (
     <header className="site-header">
       <div className="site-header-inner">
-        <Link className="brand" to="/" aria-label={`${site.name} home`}>
-          <span aria-hidden="true">G</span>
-          <strong>{site.name}</strong>
+        <Link to="/" aria-label={`${site.name} home`}>
+          <Logo size={38} />
         </Link>
 
         <nav id="primary-nav" className={navOpen ? "is-open" : ""} aria-label="Primary">
@@ -50,9 +50,8 @@ function Footer() {
     <footer className="site-footer">
       <div className="footer-grid">
         <div className="footer-brand">
-          <Link className="brand" to="/" aria-label={`${site.name} home`}>
-            <span aria-hidden="true">G</span>
-            <strong>{site.name}</strong>
+          <Link to="/" aria-label={`${site.name} home`}>
+            <Logo size={38} inverted />
           </Link>
           <p>{site.description}</p>
         </div>

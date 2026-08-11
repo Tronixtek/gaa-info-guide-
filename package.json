@@ -1,8 +1,8 @@
 {
-  "name": "gaa-info-guide",
+  "name": "scholar-zone",
   "private": true,
   "version": "0.1.0",
-  "description": "Content and preparation resource platform for technical assessments, remote work, study abroad, and global career readiness.",
+  "description": "Opportunity discovery and preparation platform: scholarships, fellowships, remote-first employers, and the material to get ready.",
   "type": "module",
   "scripts": {
     "dev": "vite",

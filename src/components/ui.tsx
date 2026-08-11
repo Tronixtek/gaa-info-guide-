@@ -57,7 +57,13 @@ export function SectionHeading({ eyebrow, title, lede }: { eyebrow?: string; tit
   );
 }
 
-export function Tag({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "muted" }) {
+export function Tag({
+  children,
+  tone = "default"
+}: {
+  children: ReactNode;
+  tone?: "default" | "muted" | "accent";
+}) {
   return <span className={`tag tag-${tone}`}>{children}</span>;
 }
 

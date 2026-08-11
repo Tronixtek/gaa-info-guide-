@@ -3,16 +3,16 @@ import type { Author } from "./types";
 export const authors: Author[] = [
   {
     slug: "editorial-team",
-    name: "GAA Editorial Team",
+    name: "Scholar Zone Editorial Team",
     role: "Assessment research and content standards",
     credentials: [
       "Content reviewed against published test-publisher specifications",
       "Every guide re-checked on a six-month cycle"
     ],
     bio:
-      "The GAA editorial team builds and maintains the practice question bank and the written guides. Every question is mapped to a named test type and topic, carries a worked solution, and is checked against the format and timing published by the assessment vendors candidates actually sit.",
+      "The Scholar Zone editorial team builds and maintains the practice question bank and the written guides. Every question is mapped to a named test type and topic, carries a worked solution, and is checked against the format and timing published by the assessment vendors candidates actually sit.",
     focus: ["Question bank", "Worked solutions", "Editorial standards"],
-    initials: "GE"
+    initials: "SZ"
   },
   {
     slug: "assessment-practice",

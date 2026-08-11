@@ -29,19 +29,35 @@ export function About() {
       <PageHeader
         eyebrow="About"
         title={`What ${site.name} is`}
-        lede="A preparation resource for people sitting assessments that decide access to jobs, study places and international opportunities. The practice tests and guides are free because the tests themselves are the barrier — not the information about them."
+        lede="Two halves, in this order. First we show people the opportunities that exist — fully funded scholarships, fellowships and employers hiring globally. Then we sell the material that gets them ready to win one."
       />
+
+      <section>
+        <h2>Why that order</h2>
+        <p>
+          Someone who has never heard of Chevening has no reason to buy an assessment pack. Awareness
+          comes first, and it is the part that is genuinely hard to come by if you are applying from
+          outside the hiring or admitting country. So the opportunity pages are free, detailed, and
+          honest about eligibility — including when a programme is closed to you.
+        </p>
+        <p>
+          Being ready is the part people actually lose on. Not eligibility, but an essay started too
+          late, a test sat with no room to retake, a work-sample task rushed. That is what the
+          preparation material is for.
+        </p>
+      </section>
 
       <section>
         <h2>What we publish</h2>
         <p>
-          Two things. First, a bank of {stats.questionCount} original practice questions across{" "}
-          {stats.testTypeCount} assessment formats, each one timed, scored and carrying a full worked
-          solution. Second, {stats.guideCount} in-depth guides covering the pathway around the test:
-          remote hiring pipelines, study abroad timelines, and building an income working from home.
+          {stats.opportunityCount} named opportunities across {stats.destinationCount} destinations,
+          each covering who it is genuinely open to, what it covers, how selection works and what to
+          prepare. A bank of {stats.questionCount} original practice questions across{" "}
+          {stats.testTypeCount} assessment formats, timed, scored and carrying a full worked solution.
+          And {stats.guideCount} in-depth guides covering the pathway around the application.
         </p>
         <p>
-          Every practice question is written to the format and timing published by the major assessment
+          Practice questions are written to the format and timing published by the major assessment
           vendors — {stats.publisherCount} of them are referenced across the test-type guides. They are
           original questions written to those specifications, not reproductions of any live test paper.
         </p>
@@ -50,6 +66,8 @@ export function About() {
       <FactPanel
         heading="What we will not do"
         items={[
+          "Publish a deadline or award amount that could go stale — we link the official page instead.",
+          "Imply a programme is open to you when its eligibility rules say otherwise.",
           "Publish or reproduce questions from live commercial test papers.",
           "State a statistic we cannot attribute to a named source or derive from our own content.",
           "Present an indicative score band as though it were a norm-referenced percentile.",

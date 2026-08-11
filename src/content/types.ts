@@ -66,6 +66,35 @@ export interface Guide {
   relatedTestTypes?: string[];
 }
 
+export type OpportunityCategory =
+  | "government-scholarship"
+  | "eu-programme"
+  | "leadership-fellowship"
+  | "remote-employer";
+
+export interface Opportunity {
+  slug: string;
+  name: string;
+  category: OpportunityCategory;
+  /** Who funds or runs it, e.g. "UK government". */
+  host: string;
+  /** Where it takes you, e.g. "United Kingdom" or "Distributed". */
+  destination: string;
+  level: string;
+  summary: string;
+  openTo: string;
+  /**
+   * Qualitative only. Award amounts and deadlines change every cycle, so we
+   * never state them — the official page is the authority.
+   */
+  covers: string[];
+  selection: string[];
+  whatToPrepare: string[];
+  officialUrl: string;
+  relatedTestTypes?: string[];
+  relatedGuides?: string[];
+}
+
 export interface Product {
   slug: string;
   title: string;

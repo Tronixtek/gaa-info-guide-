@@ -1,0 +1,37 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#241B47"/>
+      <stop offset="0.55" stop-color="#4C1D95"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="0.55" stop-color="#9333EA"/>
+      <stop offset="1" stop-color="#FF6B4A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(1010 120) rotate(120) scale(460)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF6B4A" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FF6B4A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <g transform="translate(88 92)">
+    <rect width="96" height="96" rx="29" fill="url(#mark)"/>
+    <path d="M31 32.5H65L31 63.5H65" stroke="#FFFFFF" stroke-width="8.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <text x="208" y="140" font-family="Georgia, 'Times New Roman', serif" font-size="52" font-style="italic" fill="#FFFFFF">Scholar</text>
+  <text x="208" y="182" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="9" fill="#FFB4A0">ZONE</text>
+
+  <text x="88" y="330" font-family="Georgia, 'Times New Roman', serif" font-size="78" fill="#FFFFFF">Find the opportunity.</text>
+  <text x="88" y="416" font-family="Georgia, 'Times New Roman', serif" font-size="78" fill="#FFB4A0">Be ready to win it.</text>
+
+  <text x="88" y="492" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="27" fill="#CFC4E8">Scholarships, fellowships and remote roles — plus the preparation</text>
+  <text x="88" y="530" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="27" fill="#CFC4E8">material that turns a shortlist into an offer.</text>
+
+  <rect x="88" y="560" width="150" height="6" rx="3" fill="#FF6B4A"/>
+</svg>

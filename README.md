@@ -1,15 +1,24 @@
-# GAA Info Guide
+# Scholar Zone
 
-A preparation platform for people sitting the assessments that gate jobs, study
-places and international opportunities: free timed practice tests with worked
-solutions, plus in-depth guides covering remote hiring, study abroad and
-work-from-home careers.
+**Find the opportunity. Be ready to win it.**
+
+Scholar Zone does two things, in this order: it shows people the funded
+opportunities that exist — scholarships, fellowships, remote-first employers
+hiring globally — and then sells the material that gets them ready to win one.
+
+Awareness leads, preparation converts. Someone who has never heard of Chevening
+has no reason to buy an assessment pack.
+
+Brand guidelines — palette, type, logo usage and voice — are in
+[docs/brand.md](docs/brand.md). Read it before changing any design token.
 
 ## What is in here
 
 | Area | Route | Notes |
 | --- | --- | --- |
-| Home | `/` | Hero, live content counts, pillars, latest guides, FAQ |
+| Home | `/` | Opportunity-led hero, featured opportunities, practice, materials |
+| Opportunities | `/opportunities` | Filterable by category |
+| Opportunity | `/opportunities/:slug` | Eligibility, coverage, selection, what to prepare |
 | Practice hub | `/practice` | Every test type that has a question bank |
 | Practice runner | `/practice/:slug` | Timed test, scored report, worked solutions |
 | Test type taxonomy | `/test-types` | 8 formats, plus publisher / industry / employer facets |
@@ -29,6 +38,7 @@ work-from-home careers.
 src/
   content/     Typed content layer — the single source of truth
     types.ts       Shared interfaces
+    opportunities.ts  Named funded programmes and remote-first employers
     testTypes.ts   Test taxonomy + publisher/industry/employer facets
     questions.ts   Practice question bank with worked solutions
     guides.ts      Long-form guides and the four content pillars
@@ -43,9 +53,15 @@ src/
 scripts/
   generate-sitemap.mjs   Derives sitemap.xml from the content slugs
 docs/
+  brand.md                 Palette, type, logo usage, voice
   competitive-research.md  Platform research and the decisions taken from it
   product-plan.md          Audience, pillars and revenue direction
 ```
+
+**Opportunity data policy.** Deadlines, award amounts and eligibility lists
+change every cycle, so none are stored in `opportunities.ts`. Every entry links
+the official page and every opportunity surface carries a verify notice. A stale
+deadline is worse than no deadline.
 
 Content is data, not markup. Headline figures (`stats` in `src/content/site.ts`)
 are getters over the content arrays, so a stated count cannot drift away from
