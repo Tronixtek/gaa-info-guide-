@@ -5,3 +5,7 @@ dist
 coverage
 *.tsbuildinfo
 .DS_Store
+
+# Firebase
+firebase-debug.log
+.firebase/
