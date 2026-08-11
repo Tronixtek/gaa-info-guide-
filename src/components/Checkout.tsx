@@ -1,23 +1,34 @@
-import { AlertTriangle, ArrowRight, Check, Download, Loader2, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Download,
+  Loader2,
+  ShieldCheck
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   FLUTTERWAVE_PUBLIC_KEY,
   PAYPAL_CLIENT_ID,
   PAYSTACK_PUBLIC_KEY,
   SCRIPTS,
-  checkoutEnabled,
+  availabilityOf,
   createOrder,
   formatPrice,
-  gatewaysForCurrency,
+  gateways,
   loadScript,
   verifyOrder,
+  workingGateways,
   type Currency,
+  type Gateway,
   type GatewayId,
+  type UnavailableReason,
   type VerifyResponse
 } from "../lib/payments";
 import type { Product } from "../content/types";
+import { GatewayLogo } from "./GatewayLogo";
 
-// Gateway SDKs attach themselves to window; these are the surfaces we touch.
 declare global {
   interface Window {
     PaystackPop?: { newTransaction: (options: Record<string, unknown>) => void };
@@ -32,42 +43,47 @@ declare global {
 
 type Stage = "form" | "paying" | "verifying" | "done" | "error";
 
+interface Blocked {
+  gateway: Gateway;
+  reason: UnavailableReason;
+}
+
 export function Checkout({ product }: { product: Product }) {
   const [currency, setCurrency] = useState<Currency>("USD");
   const [gateway, setGateway] = useState<GatewayId | null>(null);
+  const [blocked, setBlocked] = useState<Blocked | null>(null);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [stage, setStage] = useState<Stage>("form");
   const [message, setMessage] = useState("");
   const [result, setResult] = useState<VerifyResponse | null>(null);
   const paypalRef = useRef<HTMLDivElement>(null);
+  const blockedRef = useRef<HTMLDivElement>(null);
 
-  const available = gatewaysForCurrency(currency);
   const amount = currency === "NGN" ? product.priceNgn : product.priceUsd;
 
-  // Reset the chosen gateway when it is not offered in the new currency.
+  // Switching currency can invalidate an already-chosen gateway.
   useEffect(() => {
-    if (gateway && !available.some((entry) => entry.id === gateway)) setGateway(null);
-  }, [currency, gateway, available]);
+    if (!gateway) return;
+    const chosen = gateways.find((entry) => entry.id === gateway);
+    if (chosen && !availabilityOf(chosen, currency).available) setGateway(null);
+  }, [currency, gateway]);
 
-  if (!checkoutEnabled()) {
-    return (
-      <div className="checkout-panel">
-        <h2>Checkout is not live yet</h2>
-        <p className="checkout-disabled">
-          <AlertTriangle size={18} aria-hidden="true" />
-          <span>
-            No payment gateway is configured for this deployment, so nothing here can take a payment.
-            Rather than show a checkout that cannot complete, we have disabled it. Join the waitlist and
-            you will be first to know when it opens.
-          </span>
-        </p>
-        <a className="button button-primary" href="/contact">
-          Join the waitlist <ArrowRight size={18} aria-hidden="true" />
-        </a>
-      </div>
-    );
-  }
+  // Send focus to the notice so it is announced rather than silently swapped in.
+  useEffect(() => {
+    if (blocked) blockedRef.current?.focus();
+  }, [blocked]);
+
+  const choose = (entry: Gateway) => {
+    const { available, reason } = availabilityOf(entry, currency);
+    if (!available && reason) {
+      setBlocked({ gateway: entry, reason });
+      setGateway(null);
+      return;
+    }
+    setBlocked(null);
+    setGateway(entry.id);
+  };
 
   const fail = (error: unknown) => {
     setStage("error");
@@ -133,16 +149,12 @@ export function Checkout({ product }: { product: Product }) {
           customer: { email, name },
           customizations: { title: "Scholar Zone", description: product.title },
           callback: () => void confirm(order.reference, "flutterwave"),
-          onclose: () => {
-            setStage((current) => (current === "paying" ? "form" : current));
-          }
+          onclose: () => setStage((current) => (current === "paying" ? "form" : current))
         });
         return;
       }
 
       if (gateway === "stripe") {
-        // Stripe Checkout Sessions must be created server-side; we only follow
-        // the URL the server hands back.
         if (!order.redirectUrl) throw new Error("Stripe session was not created.");
         window.location.href = order.redirectUrl;
         return;
@@ -164,6 +176,93 @@ export function Checkout({ product }: { product: Product }) {
       fail(error);
     }
   };
+
+  /* ------------------------------------------------ gateway unavailable view */
+
+  if (blocked) {
+    const alternatives = workingGateways(currency);
+    const otherCurrency: Currency = currency === "USD" ? "NGN" : "USD";
+    const worksInOther =
+      blocked.reason === "wrong-currency" && availabilityOf(blocked.gateway, otherCurrency).available;
+
+    return (
+      <div className="checkout-panel checkout-blocked" tabIndex={-1} ref={blockedRef} role="status">
+        <span className="blocked-logo">
+          <GatewayLogo id={blocked.gateway.id} size={54} />
+        </span>
+
+        <h2>{blocked.gateway.name} is currently unavailable</h2>
+
+        {blocked.reason === "not-configured" ? (
+          <p>
+            We have not finished setting up {blocked.gateway.name} on Scholar Zone yet, so it cannot
+            take a payment right now. Nothing has been charged. Please choose a different gateway
+            below.
+          </p>
+        ) : (
+          <p>
+            {blocked.gateway.name} does not support <strong>{currency}</strong> payments here. It
+            accepts {blocked.gateway.currencies.join(" and ")}. Nothing has been charged.
+          </p>
+        )}
+
+        {worksInOther && (
+          <button
+            type="button"
+            className="button button-primary"
+            onClick={() => {
+              setCurrency(otherCurrency);
+              setBlocked(null);
+              setGateway(blocked.gateway.id);
+            }}
+          >
+            Switch to {otherCurrency} and use {blocked.gateway.name}{" "}
+            <ArrowRight size={18} aria-hidden="true" />
+          </button>
+        )}
+
+        {alternatives.length > 0 ? (
+          <div className="blocked-alternatives">
+            <h3>Try a different gateway</h3>
+            <div className="gateway-grid">
+              {alternatives.map((entry) => (
+                <button
+                  key={entry.id}
+                  type="button"
+                  className="gateway gateway-button"
+                  onClick={() => {
+                    setBlocked(null);
+                    setGateway(entry.id);
+                  }}
+                >
+                  <GatewayLogo id={entry.id} />
+                  <span className="gateway-text">
+                    <span className="gateway-name">{entry.name}</span>
+                    <span className="gateway-methods">{entry.methods.join(" · ")}</span>
+                  </span>
+                  <ArrowRight size={17} aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="checkout-disabled">
+            <AlertTriangle size={18} aria-hidden="true" />
+            <span>
+              No payment gateway is available yet on this deployment. Join the waitlist and we will
+              email you the moment checkout opens.
+            </span>
+          </p>
+        )}
+
+        <button type="button" className="link-button" onClick={() => setBlocked(null)}>
+          <ArrowLeft size={14} aria-hidden="true" /> Back to checkout
+        </button>
+      </div>
+    );
+  }
+
+  /* -------------------------------------------------------------- paid view */
 
   if (stage === "done" && result) {
     return (
@@ -195,6 +294,8 @@ export function Checkout({ product }: { product: Product }) {
     );
   }
 
+  /* ------------------------------------------------------------ checkout form */
+
   return (
     <form className="checkout-panel" onSubmit={start}>
       <h2>Buy {product.title}</h2>
@@ -224,25 +325,34 @@ export function Checkout({ product }: { product: Product }) {
       <fieldset className="checkout-field">
         <legend>Pay with</legend>
         <div className="gateway-grid">
-          {available.map((entry) => (
-            <label key={entry.id} className={gateway === entry.id ? "gateway is-selected" : "gateway"}>
-              <input
-                type="radio"
-                name="gateway"
-                value={entry.id}
-                checked={gateway === entry.id}
-                onChange={() => setGateway(entry.id)}
-                required
-              />
-              <span className="gateway-name">{entry.name}</span>
-              <span className="gateway-blurb">{entry.blurb}</span>
-              <span className="gateway-methods">{entry.methods.join(" · ")}</span>
-            </label>
-          ))}
+          {gateways.map((entry) => {
+            const { available } = availabilityOf(entry, currency);
+            const selected = gateway === entry.id;
+            return (
+              <button
+                key={entry.id}
+                type="button"
+                className={[
+                  "gateway",
+                  "gateway-button",
+                  selected ? "is-selected" : "",
+                  available ? "" : "is-unavailable"
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-pressed={selected}
+                onClick={() => choose(entry)}
+              >
+                <GatewayLogo id={entry.id} />
+                <span className="gateway-text">
+                  <span className="gateway-name">{entry.name}</span>
+                  <span className="gateway-methods">{entry.methods.join(" · ")}</span>
+                </span>
+                {selected && <Check size={18} aria-hidden="true" className="gateway-check" />}
+              </button>
+            );
+          })}
         </div>
-        {available.length === 0 && (
-          <p className="footnote">No gateway is available for {currency} on this deployment.</p>
-        )}
       </fieldset>
 
       <div className="field">
@@ -289,6 +399,8 @@ export function Checkout({ product }: { product: Product }) {
         </button>
       )}
 
+      {!gateway && <p className="footnote">Choose a payment method to continue.</p>}
+
       {message && (
         <p className={stage === "error" ? "checkout-error" : "footnote"} role="status">
           {message}
@@ -298,8 +410,8 @@ export function Checkout({ product }: { product: Product }) {
       <p className="checkout-trust">
         <ShieldCheck size={16} aria-hidden="true" />
         <span>
-          Card details go straight to the payment provider and never touch our servers. Every payment is
-          verified with the provider before any download is released.
+          Card details go straight to the payment provider and never touch our servers. Every payment
+          is verified with the provider before any download is released.
         </span>
       </p>
     </form>

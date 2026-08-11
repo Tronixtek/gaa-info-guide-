@@ -81,6 +81,32 @@ export const gatewaysForCurrency = (currency: Currency) =>
 /** True when no gateway has a publishable key — checkout must say so, not pretend. */
 export const checkoutEnabled = () => configuredGateways().length > 0;
 
+export type UnavailableReason = "not-configured" | "wrong-currency";
+
+export interface Availability {
+  available: boolean;
+  reason?: UnavailableReason;
+}
+
+/**
+ * Every gateway is shown in the selector so buyers can see what is supported,
+ * but a gateway can be unusable for two different reasons and the customer
+ * deserves to be told which — "try another one" is useless if the real fix is
+ * switching currency.
+ */
+export function availabilityOf(gateway: Gateway, currency: Currency): Availability {
+  if (!gateway.configured) return { available: false, reason: "not-configured" };
+  if (!gateway.currencies.includes(currency)) return { available: false, reason: "wrong-currency" };
+  return { available: true };
+}
+
+/** Gateways that would work right now, for suggesting an alternative. */
+export const workingGateways = (currency: Currency) =>
+  gateways.filter((gateway) => availabilityOf(gateway, currency).available);
+
+/** Currencies a given gateway could work in, if it is configured at all. */
+export const currenciesFor = (gateway: Gateway) => (gateway.configured ? gateway.currencies : []);
+
 export const formatPrice = (amount: number, currency: Currency) =>
   new Intl.NumberFormat(currency === "NGN" ? "en-NG" : "en-US", {
     style: "currency",
