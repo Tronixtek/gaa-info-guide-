@@ -101,8 +101,17 @@ export interface Product {
   badge: string;
   description: string;
   priceUsd: number;
+  /**
+   * Set by the business, not converted at runtime. A live FX conversion in the
+   * client would drift from what the gateway actually settles at, and would
+   * show a different price on every page load.
+   */
+  priceNgn: number;
   includes: string[];
   bestFor: string;
+  /** What the buyer receives, listed on the product page before purchase. */
+  deliverables: string[];
+  format: string;
 }
 
 export interface PricingTier {

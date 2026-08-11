@@ -8,6 +8,7 @@ import { Privacy, Terms } from "./pages/Legal";
 import { NotFound } from "./pages/NotFound";
 import { OpportunitiesIndex, OpportunityDetail } from "./pages/Opportunities";
 import { PracticeIndex, PracticeTest } from "./pages/Practice";
+import { ProductDetail } from "./pages/ProductDetail";
 import { TestTypeDetail, TestTypesIndex } from "./pages/TestTypes";
 
 export function App() {
@@ -29,6 +30,7 @@ export function App() {
         <Route path="guides/:slug" element={<GuideDetail />} />
 
         <Route path="resources" element={<Resources />} />
+        <Route path="resources/:slug" element={<ProductDetail />} />
         <Route path="pricing" element={<Pricing />} />
 
         <Route path="about" element={<About />} />

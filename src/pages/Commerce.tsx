@@ -49,8 +49,8 @@ export function Resources() {
             </ul>
             <div className="product-footer">
               <strong className="price">${product.priceUsd}</strong>
-              <Link className="button button-primary button-small" to="/contact">
-                Join the waitlist <ArrowRight size={16} aria-hidden="true" />
+              <Link className="button button-primary button-small" to={`/resources/${product.slug}`}>
+                View pack <ArrowRight size={16} aria-hidden="true" />
               </Link>
             </div>
           </article>
@@ -58,9 +58,9 @@ export function Resources() {
       </div>
 
       <p className="footnote">
-        Checkout is not open yet. Packs are in production and the waitlist gets first access with
-        launch pricing. The {stats.questionCount} practice questions and {stats.guideCount} guides on
-        this site remain free regardless.
+        Pay with Paystack, Flutterwave, Stripe or PayPal — in USD or NGN. Card details go to the
+        payment provider and never touch our servers. The {stats.questionCount} practice questions and{" "}
+        {stats.guideCount} guides on this site stay free regardless.
       </p>
     </div>
   );

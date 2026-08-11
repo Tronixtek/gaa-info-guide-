@@ -8,6 +8,14 @@ export const products: Product[] = [
     description:
       "Everything needed to clear the automated stages of a remote hiring pipeline: aptitude drills, coding screen practice, and a scored async video interview rehearsal.",
     priceUsd: 29,
+    priceNgn: 45000,
+    format: "PDF workbook + editable spreadsheet trackers",
+    deliverables: [
+      "68-page PDF workbook",
+      "3 spreadsheet trackers (Google Sheets and Excel)",
+      "Printable error-log template",
+      "Lifetime access, including future revisions"
+    ],
     bestFor: "Candidates with a live application and a test booked in the next few weeks.",
     includes: [
       "Timed numerical, verbal and logical drill sets with worked solutions",
@@ -24,6 +32,15 @@ export const products: Product[] = [
     description:
       "The twelve-month application timeline turned into working documents — deadline tracker, statement planner, scholarship pipeline and a per-country document checklist.",
     priceUsd: 39,
+    priceNgn: 60000,
+    format: "PDF planner + editable spreadsheet trackers",
+    deliverables: [
+      "84-page PDF planner",
+      "Twelve-month timeline tracker (Google Sheets and Excel)",
+      "Programme comparison and scholarship pipeline sheets",
+      "Document and financial-evidence checklists",
+      "Lifetime access, including future revisions"
+    ],
     bestFor: "Applicants targeting an intake twelve months out who need the sequencing handled.",
     includes: [
       "Twelve-month timeline tracker with irreversibility-ordered milestones",
@@ -41,6 +58,15 @@ export const products: Product[] = [
     description:
       "The four-week preparation plan delivered as a structured programme, combined with CV positioning for international applications and the full practice question bank.",
     priceUsd: 79,
+    priceNgn: 120000,
+    format: "Full PDF library + all trackers + structured programme",
+    deliverables: [
+      "Everything in both packs above",
+      "Four-week programme as a day-by-day PDF schedule",
+      "CV and portfolio positioning workbook",
+      "Remote work setup guide covering contracting and payment routes",
+      "Twelve months of updates as new material publishes"
+    ],
     bestFor: "Career changers running assessments, applications and interviews at the same time.",
     includes: [
       "Everything in both packs above",

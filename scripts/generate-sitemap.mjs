@@ -30,6 +30,7 @@ const testTypeSlugs = readSlugs("src/content/testTypes.ts");
 const guideSlugs = readSlugs("src/content/guides.ts");
 const authorSlugs = readSlugs("src/content/authors.ts");
 const opportunitySlugs = readSlugs("src/content/opportunities.ts");
+const productSlugs = readSlugs("src/content/commerce.ts");
 
 // Test types with no question bank yet are still documented, but only the ones
 // with questions get a /practice route.
@@ -55,6 +56,11 @@ const routes = [
   ...opportunitySlugs.map((slug) => ({
     path: `/opportunities/${slug}`,
     priority: "0.9",
+    changefreq: "monthly"
+  })),
+  ...productSlugs.map((slug) => ({
+    path: `/resources/${slug}`,
+    priority: "0.8",
     changefreq: "monthly"
   })),
   ...practicedTypes.map((slug) => ({

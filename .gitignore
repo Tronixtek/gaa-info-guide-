@@ -9,3 +9,7 @@ coverage
 # Firebase
 firebase-debug.log
 .firebase/
+
+# Local env
+.env.local
+.env.*.local
